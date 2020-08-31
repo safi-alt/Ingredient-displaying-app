@@ -18,13 +18,13 @@
 }
 
 .error-modal p {
-    padding: 1rem;
+  padding: 1rem;
 }
 
 .error-modal__actions {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 0.5rem;
 }
 
 .backdrop {
