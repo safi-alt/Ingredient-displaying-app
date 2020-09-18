@@ -1,61 +1,66 @@
 import React, { useState, useEffect } from "react";
 
 import IngredientForm from "./IngredientForm";
-import Search from "./Search";
 import IngredientList from "./IngredientList";
+import Search from "./Search";
 
 const Ingredients = () => {
-  const [userIngriedients, setUserIngriedients] = useState([]);
+  const [userIngredients, setUserIngredients] = useState([]);
 
   useEffect(() => {
     fetch("https://react-hooks-project-5ea25.firebaseio.com/ingredients.json")
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((responseData) => {
-        const loadIngredients = [];
+        const loadedIngredients = [];
         for (const key in responseData) {
-          loadIngredients.push({
+          loadedIngredients.push({
             id: key,
-            title: responseData[key].ingredient.title,
-            amount: responseData[key].ingredient.amount,
+            title: responseData[key].title,
+            amount: responseData[key].amount,
           });
         }
-        setUserIngriedients(loadIngredients);
+        setUserIngredients(loadedIngredients);
       });
   }, []);
 
   useEffect(() => {
-    console.log("RENDERING INGREDIENTS", userIngriedients);
-  }, [userIngriedients]);
+    console.log("RENDERING INGREDIENTS", userIngredients);
+  }, [userIngredients]);
+
+  const filteredIngredientsHandler = (filteredIngredients) => {
+    setUserIngredients(filteredIngredients);
+  };
 
   const addIngredientHandler = (ingredient) => {
     fetch("https://react-hooks-project-5ea25.firebaseio.com/ingredients.json", {
       method: "POST",
-      body: JSON.stringify({ ingredient }),
+      body: JSON.stringify(ingredient),
       headers: { "Content-Type": "application/json" },
     })
       .then((response) => {
         return response.json();
       })
       .then((responseData) => {
-        setUserIngriedients((prevIngredients) => [
+        setUserIngredients((prevIngredients) => [
           ...prevIngredients,
           { id: responseData.name, ...ingredient },
         ]);
       });
   };
 
+  // const removeIngredientHandler = (ingredientId) => {
+  //   setUserIngredients((prevIngredients) =>
+  //     prevIngredients.filter((ingredient) => ingredient.id !== ingredientId)
+  //   );
+  // };
+
   return (
     <div className="App">
-      <IngredientForm onIngredient={addIngredientHandler} />
+      <IngredientForm onAddIngredient={addIngredientHandler} />
 
       <section>
-        <Search />
-        <IngredientList
-          ingredients={userIngriedients}
-          onRemoveItem={() => {}}
-        />
+        <Search onLoadIngredients={filteredIngredientsHandler} />
+        <IngredientList ingredients={userIngredients} onRemoveItem={() => {}} />
       </section>
     </div>
   );
